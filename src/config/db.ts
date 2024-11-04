@@ -1,35 +1,23 @@
-// import mongoose from "mongoose";
-// import dotenv from "dotenv";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-// dotenv.config();
+dotenv.config();
 
-// export const connectDB = async () => {
-//   try {
-//     await mongoose.connect("mongodb://127.0.0.1:27017/hunsa-salon");
-//     console.log("MongoDB connected");
-//   } catch (error) {
-//     console.error("MongoDB connection failed", error);
-//     process.exit(1);
-//   }
-// };
+export const connectDB = async () => {
+  try {
+    const mongoUrl = process.env.MONGO_URL; // Get the URL from the environment variable
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { config } from 'dotenv';
+    // Check if the mongoUrl is defined
+    if (!mongoUrl) {
+      console.error("MongoDB URL is not defined. Please set the MONGO_URL environment variable.");
+      process.exit(1);
+    }
 
-config();
-
-// ตั้งค่า DynamoDB Client
-const dynamoClient = new DynamoDBClient({
-  region: 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.aws_access_key_id!,
-    secretAccessKey: process.env.aws_secret_access_key!,
-    sessionToken: process.env.aws_session_token 
-  },
-});
-
-// สร้าง Document Client
-const ddbDocClient = DynamoDBDocumentClient.from(dynamoClient);
-
-export { ddbDocClient };
+    console.log("Connecting to MongoDB at:", mongoUrl); // Log the URL
+    await mongoose.connect(mongoUrl);
+    console.log("MongoDB connected");
+  } catch (error) {
+    console.error("MongoDB connection failed", error);
+    process.exit(1);
+  }
+};
